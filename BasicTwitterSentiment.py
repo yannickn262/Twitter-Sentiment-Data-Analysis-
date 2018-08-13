@@ -29,36 +29,40 @@ pos = 0
 neg = 0
 neutral = 0
 polarity = 0
-for tweet in tweets:
+
+polarityTotal = 0
+for tweet in public_tweets:
     analysis = TextBlob(tweet.text)
+    polarityTotal += analysis.sentiment.polarity
     if(analysis.sentiment.polarity == 0):
         neutral +=1
     elif(analysis.sentiment.polarity > 0.00):
         pos += 1
     elif(analysis.sentiment.polarity < 0.00):
-        neg += 1
-pos = percentage(pos,noOfSearchTerms)
-pos = format(pos, '.2f')
-#converts sentiment to a percentage and formats to two decimal places
-neg = percentage(neg,noOfSearchTerms)
-neg = format(neg, '.2f')
-neutral = percentage(neutral,noOfSearchTerms)
-neutral = format(neutral, '.2f')
+        neg +=1
 
 print("Based off of " + str(noOfSearchTerms) + " Tweets on " + keywordSearch + ",people are ")
-if (polarity == 0):
+#polarityTotal = polarityTotal/noOfSearchTerms
+
+if (polarityTotal == 0):
     print("Neutral")
-elif(polarity > 0.00):
-    print("Positive")
-elif(polarity < 0.00):
+elif(polarityTotal > 0.00 and polarityTotal < 0.33):
+    print("Slightly Positive")
+elif(polarityTotal > 0.33 and polarityTotal < 0.66):
+    print("Mostly Positive")
+elif(polarityTotal > 0.66 and polarityTotal < 1):
+    print("Overwhelmingly Positive")
+elif(polarityTotal < 0.00):
     print("Negative")
+
 
 #this creates the pie chart
 labels = ['Positive ['+str(pos)+ '%]'], 'Neutral [' + str(neutral) + '%]', 'Negative [' + str(neg) +'%]'
 sizes = [pos, neutral, neg]
 colors = ['yellowgreen', 'gold', 'red']
-patches, texts = plt.pie(sizes, colors = colors, startangle = 90)
-plt.legend(patches, labels, loc = "best")
+plt.pie(sizes, colors = colors, startangle = 90, autopct='%1.1f%%')
+plt.axis('equal')
+plt.legend(labels=['Positive', 'Neutral', 'Negative'], loc="best")
 plt.title('How people are reacting on ' + keywordSearch + ' by analyzing ' + str(noOfSearchTerms) + ' Tweets.')
 plt.axis('equal')
 plt.tight_layout()
