@@ -18,9 +18,10 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
-public_tweets = api.search('Trump')
+
 
 keywordSearch = input("Enter a keyword/hashtag:  ")
+public_tweets = api.search(keywordSearch)
 noOfSearchTerms = int(input("Enter how many tweets to analyze: "))
 tweets = tweepy.Cursor(api.search, q = keywordSearch, lang = "English").items(noOfSearchTerms)
 #above line is responsible for creating filters as to how to narrow down search results
