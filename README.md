@@ -10,3 +10,7 @@ https://www.youtube.com/watch?v=o_OZdbCzHUA&t=347s
 This assignment was fantastic at getting my foot in the door in working firsthand with natural language processing software tools.
 It was important to understand the concept of Tokenization and how the Tweet, in this case, is broken down into individual words
 that can then be rated on the -1 to 1 scale. 
+I plan on further working on expanding the project by working on the following:
+  - More accurate calculation of polarityTotal
+  - Fixing Error where user inputs something other than Y or N and program resumes regardless
+  - Add levels of Negativity 
