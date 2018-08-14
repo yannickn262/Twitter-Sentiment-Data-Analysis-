@@ -18,53 +18,60 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
+retry = True;
+while retry == True:
+    keywordSearch = input("Enter a keyword/hashtag:  ")
+    public_tweets = api.search(keywordSearch)
+    noOfSearchTerms = int(input("Enter how many tweets to analyze: "))
+    tweets = tweepy.Cursor(api.search, q = keywordSearch, lang = "English").items(noOfSearchTerms)
+    #above line is responsible for creating filters as to how to narrow down search results
 
+    pos = 0
+    neg = 0
+    neutral = 0
+    polarity = 0
 
-keywordSearch = input("Enter a keyword/hashtag:  ")
-public_tweets = api.search(keywordSearch)
-noOfSearchTerms = int(input("Enter how many tweets to analyze: "))
-tweets = tweepy.Cursor(api.search, q = keywordSearch, lang = "English").items(noOfSearchTerms)
-#above line is responsible for creating filters as to how to narrow down search results
+    polarityTotal = 0
+    for tweet in public_tweets:
+        analysis = TextBlob(tweet.text)
+        polarityTotal += analysis.sentiment.polarity
+        if(analysis.sentiment.polarity == 0):
+            neutral +=1
+        elif(analysis.sentiment.polarity > 0.00):
+            pos += 1
+        elif(analysis.sentiment.polarity < 0.00):
+            neg +=1
 
-pos = 0
-neg = 0
-neutral = 0
-polarity = 0
-
-polarityTotal = 0
-for tweet in public_tweets:
-    analysis = TextBlob(tweet.text)
-    polarityTotal += analysis.sentiment.polarity
-    if(analysis.sentiment.polarity == 0):
-        neutral +=1
-    elif(analysis.sentiment.polarity > 0.00):
-        pos += 1
-    elif(analysis.sentiment.polarity < 0.00):
-        neg +=1
-
-print("Based off of " + str(noOfSearchTerms) + " Tweets on " + keywordSearch + ",people are ")
+    print("Based off of " + str(noOfSearchTerms) + " Tweets on " + keywordSearch + ",people are ")
 #polarityTotal = polarityTotal/noOfSearchTerms
 
-if (polarityTotal == 0):
-    print("Neutral")
-elif(polarityTotal > 0.00 and polarityTotal < 0.33):
-    print("Slightly Positive")
-elif(polarityTotal > 0.33 and polarityTotal < 0.66):
-    print("Mostly Positive")
-elif(polarityTotal > 0.66 and polarityTotal < 1):
-    print("Overwhelmingly Positive")
-elif(polarityTotal < 0.00):
-    print("Negative")
+    if (polarityTotal == 0):
+        print("Neutral")
+    elif(polarityTotal > 0.00 and polarityTotal < 0.33):
+        print("Slightly Positive")
+    elif(polarityTotal > 0.33 and polarityTotal < 0.90):
+        print("Mostly Positive")
+    elif(polarityTotal > 0.90 and polarityTotal < 1):
+        print("Overwhelmingly Positive")
+    elif(polarityTotal < 0.00):
+        print("Negative")
 
 
 #this creates the pie chart
-labels = ['Positive ['+str(pos)+ '%]'], 'Neutral [' + str(neutral) + '%]', 'Negative [' + str(neg) +'%]'
-sizes = [pos, neutral, neg]
-colors = ['yellowgreen', 'gold', 'red']
-plt.pie(sizes, colors = colors, startangle = 90, autopct='%1.1f%%')
-plt.axis('equal')
-plt.legend(labels=['Positive', 'Neutral', 'Negative'], loc="best")
-plt.title('How people are reacting on ' + keywordSearch + ' by analyzing ' + str(noOfSearchTerms) + ' Tweets.')
-plt.axis('equal')
-plt.tight_layout()
-plt.show()
+    labels = ['Positive ['+str(pos)+ '%]'], 'Neutral [' + str(neutral) + '%]', 'Negative [' + str(neg) +'%]'
+    sizes = [pos, neutral, neg]
+    colors = ['yellowgreen', 'gold', 'red']
+    plt.pie(sizes, colors = colors, startangle = 90, autopct='%1.1f%%')
+    plt.axis('equal')
+    plt.legend(labels=['Positive', 'Neutral', 'Negative'], loc="best")
+    plt.title('How people are reacting on ' + keywordSearch + ' by analyzing ' + str(noOfSearchTerms) + ' Tweets.')
+    plt.axis('equal')
+    plt.tight_layout()
+    plt.show()
+
+    print("Do you want to try again?")
+    retryMessage = input("Y for Yes, N for No: ")
+    retryMessage = retryMessage.lower()
+    if(retryMessage == "n" or retryMessage == "no"):
+        retry = False;
+    
